@@ -14,8 +14,8 @@ export const create = async (req, res) => {
 };
 
 export const list = async (req, res) => {
-  const { limit, search, sortByPrice, sortByName, cateId, time } = req.query;
-  if (limit) {
+  const { limit, search, sortByPrice, sortByName, cateId, time, status } = req.query;
+  if (limit && !time && !status) {
     try {
       const products = await Product.find().limit(limit).populate('category').exec();
       return res.json(products);
@@ -24,9 +24,9 @@ export const list = async (req, res) => {
         message: "Error",
       });
     }
-  } else if (limit && time) {
+  } else if (limit && time && status) {
     try {
-      const products = await Product.find()
+      const products = await Product.find({status})
         .limit(limit).populate('category')
         .sort({ createdAt: time })
         .exec();
@@ -62,7 +62,7 @@ export const list = async (req, res) => {
         .exec();
         return res.json(products);
     } catch (error) {
-      res.status(400).json({
+      return  res.status(400).json({
         message: "Error",
       });
     }
@@ -74,7 +74,7 @@ export const list = async (req, res) => {
         .exec();
         return  res.json(products);
     } catch (error) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "Error",
       });
     }
@@ -83,18 +83,18 @@ export const list = async (req, res) => {
       const products = await Product.find({ $text: { $search: search } })
         .populate("category")
         .exec();
-      res.json(products);
+        return res.json(products);
     } catch (error) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "Error",
       });
     }
   } else {
     try {
       const products = await Product.find().populate("category").exec();
-      res.json(products);
+      return res.json(products);
     } catch (error) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "Error",
       });
     }

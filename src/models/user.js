@@ -11,6 +11,10 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    status: {
+        type: Boolean,
+        default: true
+    },
     salt: {
         type: String
     },
