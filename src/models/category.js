@@ -11,6 +11,10 @@ const categorySchema = mongoose.Schema({
         required: true,
         lowercase: true,
         unique: true
+    },
+    status: {
+        type: Boolean,
+        default: true
     }
 }, { timestamps: true})
 

@@ -1,4 +1,5 @@
 import Product from "../models/product";
+import Category from "../models/category";
 import slugify from "slugify";
 
 export const create = async (req, res) => {
@@ -14,10 +15,14 @@ export const create = async (req, res) => {
 };
 
 export const list = async (req, res) => {
-  const { limit, search, sortByPrice, sortByName, cateId, time, status } = req.query;
+  const { limit, search, sortByPrice, sortByName, cateId, time, status } =
+    req.query;
   if (limit && !time && !status) {
     try {
-      const products = await Product.find().limit(limit).populate('category').exec();
+      const products = await Product.find()
+        .limit(limit)
+        .populate("category")
+        .exec();
       return res.json(products);
     } catch (error) {
       return res.status(400).json({
@@ -26,11 +31,12 @@ export const list = async (req, res) => {
     }
   } else if (limit && time && status) {
     try {
-      const products = await Product.find({status})
-        .limit(limit).populate('category')
+      const products = await Product.find({ status })
+        .limit(limit)
+        .populate("category")
         .sort({ createdAt: time })
         .exec();
-        return res.json(products);
+      return res.json(products);
     } catch (error) {
       return res.status(400).json({
         message: "Error",
@@ -38,7 +44,10 @@ export const list = async (req, res) => {
     }
   } else if (!limit && time) {
     try {
-      const products = await Product.find().sort({ createdAt: time }).populate('category').exec();
+      const products = await Product.find()
+        .sort({ createdAt: time })
+        .populate("category")
+        .exec();
       return res.json(products);
     } catch (error) {
       return res.status(400).json({
@@ -47,7 +56,9 @@ export const list = async (req, res) => {
     }
   } else if (cateId) {
     try {
-      const products = await Product.find({ category: cateId }).populate('category').exec();
+      const products = await Product.find({ category: cateId })
+        .populate("category")
+        .exec();
       return res.json(products);
     } catch (error) {
       return res.status(400).json({
@@ -60,9 +71,9 @@ export const list = async (req, res) => {
         .sort({ price: sortByPrice })
         .populate("category")
         .exec();
-        return res.json(products);
+      return res.json(products);
     } catch (error) {
-      return  res.status(400).json({
+      return res.status(400).json({
         message: "Error",
       });
     }
@@ -72,7 +83,7 @@ export const list = async (req, res) => {
         .sort({ title: sortByName })
         .populate("category")
         .exec();
-        return  res.json(products);
+      return res.json(products);
     } catch (error) {
       return res.status(400).json({
         message: "Error",
@@ -83,7 +94,7 @@ export const list = async (req, res) => {
       const products = await Product.find({ $text: { $search: search } })
         .populate("category")
         .exec();
-        return res.json(products);
+      return res.json(products);
     } catch (error) {
       return res.status(400).json({
         message: "Error",
@@ -113,7 +124,6 @@ export const read = async (req, res) => {
 };
 
 export const update = async (req, res) => {
-  // console.log('m', req.params.slug)
   try {
     req.body.slug = slugify(req.body.title);
     const check = { slug: req.params.slug };
@@ -121,6 +131,34 @@ export const update = async (req, res) => {
       new: true,
     }).exec();
     res.json(product);
+  } catch (error) {
+    res.status(400).json({
+      message: "Error",
+    });
+  }
+};
+
+export const updateStatus = async (req, res) => {
+  try {
+    const { category, status } = req.body;
+    const checkCate = await Category.findOne({ _id: category });
+    if (checkCate.status === false) {
+      return res
+        .status(400)
+        .json({
+          message:
+            "Danh mục đang ở trạng thái không hoạt động, không thể cập nhật trạng thái sản phẩm !!!",
+        });
+    }
+    const check = { _id: req.params.id };
+    const product = await Product.findOneAndUpdate(
+      check,
+      { status },
+      {
+        new: true,
+      }
+    ).exec();
+    return res.json(product);
   } catch (error) {
     res.status(400).json({
       message: "Error",
