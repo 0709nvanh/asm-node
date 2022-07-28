@@ -4,7 +4,8 @@ const productSchema = mongoose.Schema({
     title: {
         type: String,
         required: true,
-        minLength: 5
+        minLength: 5,
+        unique: true,
     },
     priceOld: {
         type: Number,

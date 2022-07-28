@@ -18,4 +18,6 @@ const categorySchema = mongoose.Schema({
     }
 }, { timestamps: true})
 
+categorySchema.index({ "name": "text"})
+
 export default mongoose.model("Category", categorySchema)

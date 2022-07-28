@@ -14,6 +14,17 @@ export const addCate = async (req, res) => {
   }
 };
 
+export const searchCategory = async (req, res) => {
+  const { keySearch } = req.body;
+  try {
+    console.log(keySearch);
+    const categories = await Category.find({ "name": {'$regex': keySearch, '$options': 'i'}});
+    return res.json(categories);
+  } catch (error) {
+    return res.status(400).json({ message: "Error" });
+  }
+};
+
 export const listCate = async (req, res) => {
   try {
     const categories = await Category.find().exec();
@@ -49,7 +60,7 @@ export const updateStatusCate = async (req, res) => {
         { category: req.params.id },
         {
           $set: {
-            status: false
+            status: false,
           },
         },
         { multi: true }
