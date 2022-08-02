@@ -54,7 +54,7 @@ export const list = async (req, res) => {
         message: "Error",
       });
     }
-  } else if (cateId) {
+  } else if (cateId && !sortByPrice) {
     try {
       const products = await Product.find({ category: cateId })
         .populate("category")
@@ -65,10 +65,22 @@ export const list = async (req, res) => {
         message: "Error",
       });
     }
-  } else if (sortByPrice) {
+  } else if (cateId && sortByPrice) {
+    try {
+      const products = await Product.find({ category: cateId })
+        .sort({ priceNew: sortByPrice })
+        .populate("category")
+        .exec();
+      return res.json(products);
+    } catch (error) {
+      return res.status(400).json({
+        message: "Error",
+      });
+    }
+  } else if (!cateId && sortByPrice) {
     try {
       const products = await Product.find()
-        .sort({ price: sortByPrice })
+        .sort({ priceNew: sortByPrice })
         .populate("category")
         .exec();
       return res.json(products);
@@ -116,7 +128,9 @@ export const searchProduct = async (req, res) => {
   const { keySearch } = req.body;
   try {
     console.log(keySearch);
-    const products = await Product.find({ "title": {'$regex': keySearch, '$options': 'i'}})
+    const products = await Product.find({
+      title: { $regex: keySearch, $options: "i" },
+    })
       .populate("category")
       .exec();
     return res.json(products);
@@ -127,8 +141,9 @@ export const searchProduct = async (req, res) => {
 
 export const read = async (req, res) => {
   try {
-    const product = await Product.findOne({ slug: req.params.slug }).exec();
-    res.json(product);
+    const product = await Product.findOne({ slug: req.params.slug }).populate("category").exec();
+    const products = await Product.find({ category: product.category._id }).populate("category").exec();
+    return res.json({product, products})
   } catch (error) {
     res.status(400).json({
       message: "Error",
