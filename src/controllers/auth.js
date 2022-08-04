@@ -3,7 +3,7 @@ import User from "../models/user";
 import jwt from "jsonwebtoken";
 
 export const signup = async (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, phone, password } = req.body;
   try {
     const existUser = await User.findOne({ email }).exec();
     if (existUser) {
@@ -12,11 +12,11 @@ export const signup = async (req, res) => {
       });
     }
 
-    const user = await new User({ email, username, password }).save();
+    const user = await new User({ email, phone, password }).save();
 
     return res.json({
       user: {
-        username: user.username,
+        phone: user.phone,
         email: user.email,
         _id: user._id,
         status: user.status,
@@ -50,7 +50,7 @@ export const login = async (req, res) => {
       return res.status(200).json({
         user: {
             _id: user._id,
-            username: user.username,
+            phone: user.phone,
             email: user.email,
             role: user.role,
             status: user.status,
@@ -64,7 +64,7 @@ export const login = async (req, res) => {
       token,
       user: {
         _id: user._id,
-        username: user.username,
+        phone: user.phone,
         email: user.email,
         role: user.role,
         status: user.status,

@@ -3,10 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 import { createHmac } from "crypto";
 const userSchema = mongoose.Schema(
   {
-    username: {
+    phone: {
       type: String,
       required: true,
-      minLength: 5,
     },
     email: {
       type: String,
