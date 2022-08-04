@@ -1,4 +1,4 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const productSchema = mongoose.Schema({
     title: {
@@ -42,7 +42,7 @@ const productSchema = mongoose.Schema({
         default: ""
     },
     category: {
-        type: ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Category'
     },
 }, { timestamps: true})
