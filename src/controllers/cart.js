@@ -15,7 +15,7 @@ export const getCarts = async (req, res) => {
       .populate("userId")
       .populate({
         path: "listCart",
-        populate: { path: "productId" },
+        populate: { path: "productId" }
       })
       .exec();
     res.json(carts);
@@ -26,16 +26,45 @@ export const getCarts = async (req, res) => {
 
 export const getOrderById = async (req, res) => {
   try {
-    //   const id = req.params.id;
-    //   console.log(id);
     const cart = await Cart.findOne({ _id: req.params.id })
       .populate("userId")
       .populate({
         path: "listCart",
-        populate: { path: "productId" },
+        populate: { path: "productId" }
       });
     res.json(cart);
   } catch (error) {
     console.log(error);
   }
+};
+
+export const getOrderByUser = async (req, res) => {
+  try {
+    const carts = await Cart.find({ userId: req.params.userId })
+      .populate("userId")
+      .populate({
+        path: "listCart",
+        populate: {
+          path: "productId",
+          populate: {
+            path: "category"
+          }
+        }
+      });
+    res.json(carts);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateStatusOrder = async (req, res) => {
+  try {
+    const requestCheck = { _id: req.params.id };
+    const updateStatus = await Cart.findOneAndUpdate(
+      requestCheck,
+      { status: req.body.status },
+      { new: true }
+    );
+    return res.json(updateStatus);
+  } catch (error) {}
 };
