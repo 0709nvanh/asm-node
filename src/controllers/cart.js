@@ -16,7 +16,7 @@ export const getCarts = async (req, res) => {
       .populate({
         path: "listCart",
         populate: { path: "productId" }
-      })
+      }).sort({ createdAt: -1 })
       .exec();
     res.json(carts);
   } catch (error) {
@@ -50,7 +50,7 @@ export const getOrderByUser = async (req, res) => {
             path: "category"
           }
         }
-      });
+      }).sort({ createdAt: -1 });
     res.json(carts);
   } catch (error) {
     console.log(error);
