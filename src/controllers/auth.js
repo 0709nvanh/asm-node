@@ -55,7 +55,7 @@ export const login = async (req, res) => {
             role: user.role,
             status: user.status,
           },
-        message: "Tài khoản của bạn đã bị Admin xóa quyền truy cập",
+        message: "Tài khoản của bạn đã bị Admin tắt quyền truy cập",
       });
     }
 
